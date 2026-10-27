@@ -1,0 +1,187 @@
+# MCP Server Manifest for GitHub Marketplace
+
+name: "ROS 2 MCP Server"
+id: "ros2-mcp-server"
+organization: "ranchhandrobotics"
+version: "1.0.0"
+description: "Model Context Protocol server for ROS 2 - enables AI assistants to introspect and control ROS 2 systems"
+
+# Server configuration
+server:
+  protocol: "stdio"  # Default mode, also supports SSE
+  default_transport: "stdio"
+  sse_port: 3002  # Only when using --transport sse
+  sse_endpoint: "/sse"
+  
+# Capabilities
+capabilities:
+  - "ros2-node-management"
+  - "ros2-topic-operations"
+  - "ros2-service-calls"
+  - "ros2-parameter-management"
+  - "ros2-action-operations"
+  - "ros2-bag-operations"
+  - "ros2-interface-inspection"
+  - "ros2-package-management"
+  - "ros2-launch-operations"
+  - "ros2-lifecycle-management"
+  - "ros2-diagnostics"
+
+# Tools provided (30+ tools)
+tools:
+  - name: "get_nodes"
+    description: "Returns a list of running ROS nodes"
+  - name: "get_node_info"
+    description: "Returns information about a given ROS node"
+  - name: "list_topics"
+    description: "List all available topics"
+  - name: "get_topic_info"
+    description: "Get information about a specific topic"
+  - name: "echo_topic"
+    description: "Subscribe to a topic and stream messages"
+  - name: "publish_to_topic"
+    description: "Publish a message to a topic"
+  - name: "list_services"
+    description: "List all available services"
+  - name: "get_service_type"
+    description: "Get the type of a service"
+  - name: "call_service"
+    description: "Call a ROS 2 service"
+  - name: "list_parameters"
+    description: "List parameters for a node"
+  - name: "get_parameter"
+    description: "Get the value of a parameter"
+  - name: "set_parameter"
+    description: "Set the value of a parameter"
+  - name: "list_actions"
+    description: "List all available actions"
+  - name: "get_action_info"
+    description: "Get information about an action"
+  - name: "send_action_goal"
+    description: "Send a goal to an action server"
+  - name: "record_bag"
+    description: "Record topics to a bag file"
+  - name: "play_bag"
+    description: "Play back a bag file"
+  - name: "get_bag_info"
+    description: "Get information about a bag file"
+  - name: "list_interfaces"
+    description: "List available message/service/action interfaces"
+  - name: "show_interface"
+    description: "Show the definition of an interface"
+  - name: "list_packages"
+    description: "List installed ROS 2 packages"
+  - name: "package_executables"
+    description: "List executables in a package"
+  - name: "get_package_manifest"
+    description: "Get the package.xml manifest"
+  - name: "list_launch_files"
+    description: "List launch files in a package"
+  - name: "launch_file"
+    description: "Launch a ROS 2 launch file"
+  - name: "get_launch_parameters"
+    description: "Get available parameters for a launch file"
+  - name: "list_lifecycle_nodes"
+    description: "List lifecycle-enabled nodes"
+  - name: "get_lifecycle_state"
+    description: "Get the current state of a lifecycle node"
+  - name: "set_lifecycle_transition"
+    description: "Trigger a lifecycle transition"
+  - name: "run_package_executable"
+    description: "Run a package executable"
+  - name: "kill_process"
+    description: "Kill a ROS process"
+  - name: "run_doctor"
+    description: "Run ROS 2 system diagnostics"
+
+# Installation requirements
+requirements:
+  system:
+    - "ROS 2 (Humble, Iron, Jazzy, or Kilted)"
+    - "Python 3.8+"
+  
+  python_packages:
+    - "mcp[cli]>=1.12.3"
+    - "pyyaml>=6.0"
+    - "pydantic>=2.0"
+    - "requests>=2.31.0"
+
+# Installation
+installation:
+  type: "python-package"
+  method: "pip"
+  command: "pip install --break-system-packages -e ."
+  
+  # Or via wrapper script
+  script: "./install.sh"
+
+# Configuration examples
+configuration:
+  vscode:
+    file: ".vscode/mcp.json"
+    example:
+      servers:
+        ros2:
+          command: "rde-mcp-ros2"
+          args: []
+  
+  copilot_cli:
+    file: "~/.copilot/mcp-config.json"
+    example:
+      mcpServers:
+        ros2:
+          command: "rde-mcp-ros2"
+          args: []
+  
+  claude_desktop:
+    file: "~/Library/Application Support/Claude/claude_desktop_config.json"
+    example:
+      mcpServers:
+        ros2:
+          command: "rde-mcp-ros2"
+          args: []
+  
+  # Optional: SSE mode for remote access
+  sse_mode:
+    start_command: "rde-mcp-ros2 --transport sse --port 3002"
+    example:
+      servers:
+        ros2:
+          type: "sse"
+          url: "http://localhost:3002/sse"
+
+# Usage
+usage:
+  default_mode: "stdio"
+  automatic_startup: "Server is automatically launched by AI assistant"
+  manual_sse: "rde-mcp-ros2 --transport sse --port 3002"
+  
+  example_queries:
+    - "What ROS 2 nodes are currently running?"
+    - "Show me all topics being published"
+    - "What's the current robot speed parameter?"
+    - "Record all camera topics for 30 seconds"
+    - "Launch the navigation stack"
+
+# Links
+repository: "https://github.com/ranch-hand-robotics/rde-mcp-ros-2"
+documentation: "https://github.com/ranch-hand-robotics/rde-mcp-ros-2#readme"
+issues: "https://github.com/ranch-hand-robotics/rde-mcp-ros-2/issues"
+
+# License
+license: "MIT"
+
+# Maintainers
+maintainers:
+  - name: "Ranch Hand Robotics"
+    email: "info@ranchhand.io"
+    github: "ranch-hand-robotics"
+
+# Tags
+tags:
+  - "ros2"
+  - "robotics"
+  - "mcp"
+  - "ai"
+  - "automation"
+  - "developer-tools"

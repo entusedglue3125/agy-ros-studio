@@ -1,0 +1,93 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.wise-vision/ros2_mcp",
+  "title": "ROS2 MCP",
+  "description": "MCP server for ROS 2: list, subscribe, publish and call topics, services and actions",
+  "websiteUrl": "https://wisevision.tech/docs",
+  "repository": {
+    "url": "https://github.com/wise-vision/ros2_mcp",
+    "source": "github"
+  },
+  "version": "2610",
+  "packages": [
+    {
+      "registryType": "oci",
+      "identifier": "docker.io/wisevision/ros2_mcp:jazzy",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtimeHint": "docker",
+      "runtimeArguments": [
+        {
+          "type": "named",
+          "name": "-v",
+          "description": "Mount custom messages directory",
+          "value": "~/mcp_custom_messages:/app/custom_msgs",
+          "isRequired": false
+        }
+      ],
+      "environmentVariables": [
+        {
+          "name": "MCP_CUSTOM_PROMPTS",
+          "description": "Enable custom prompts",
+          "isRequired": false,
+          "value": "false"
+        },
+        {
+          "name": "MCP_PROMPTS_LOCAL",
+          "description": "Use local prompts",
+          "isRequired": false,
+          "value": "false"
+        },
+        {
+          "name": "MCP_PROMPTS_PATH",
+          "description": "Path to custom prompts directory",
+          "isRequired": false,
+          "value": "/app/ros2_mcp_prompts"
+        },
+        {
+          "name": "MCP_PROMPTS_MODULE",
+          "description": "Name of the prompts module",
+          "isRequired": false,
+          "value": "extension_prompts"
+        },
+        {
+          "name": "ROS2_MCP_READONLY",
+          "description": "Read-only mode: when 1/true, tools that publish, call services or send/cancel action goals are not registered",
+          "isRequired": false,
+          "value": "false"
+        },
+        {
+          "name": "MCP_ROS_DISCOVERY_WARMUP",
+          "description": "Warm up ROS graph on first tool call to mitigate DDS discovery timing issues (true/false; default: auto-enabled in containers)",
+          "isRequired": false,
+          "value": "true"
+        },
+        {
+          "name": "MCP_ROS_DISCOVERY_TIMEOUT_SEC",
+          "description": "Max time (seconds) to wait during discovery warm-up",
+          "isRequired": false,
+          "value": "5.0"
+        },
+        {
+          "name": "MCP_ROS_DISCOVERY_STABLE_SEC",
+          "description": "Required 'no changes' window (seconds) before proceeding during discovery warm-up",
+          "isRequired": false,
+          "value": "1.0"
+        },
+        {
+          "name": "MCP_ROS_DISCOVERY_POLL_SEC",
+          "description": "Polling interval (seconds) used during discovery warm-up",
+          "isRequired": false,
+          "value": "0.1"
+        },
+        {
+          "name": "MCP_ROS_DISCOVERY_DELAY_SEC",
+          "description": "Minimum delay (seconds) before the first tool proceeds (in addition to stability check)",
+          "isRequired": false,
+          "value": "0.0"
+        }
+      ]
+    }
+  ]
+}

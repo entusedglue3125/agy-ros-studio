@@ -1,0 +1,16 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Node.js
+node_modules/
+
+# Generated UI files (built by npm run build)
+server/ui/ros2_viewer_app/index.html

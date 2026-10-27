@@ -1,0 +1,440 @@
+{
+  "workspace_meta": {
+    "project_name": "Autonomous Rover Exploration",
+    "package_name": "agy_rover_bringup",
+    "ros_distro": "humble",
+    "domain_id": 42,
+    "use_sim_time": true,
+    "hardware_target": "gazebo_sim"
+  },
+  "robot_model": {
+    "name": "agy_rover",
+    "base_link": "base_link",
+    "links": [
+      {
+        "name": "base_link",
+        "visual": {
+          "geometry": "box",
+          "dimensions": [0.5, 0.3, 0.15],
+          "material_color": "0.1 0.5 0.8 1.0"
+        },
+        "collision": {
+          "geometry": "box",
+          "dimensions": [0.5, 0.3, 0.15]
+        },
+        "inertial": {
+          "mass": 5.0
+        }
+      },
+      {
+        "name": "left_wheel",
+        "visual": {
+          "geometry": "cylinder",
+          "dimensions": [0.08, 0.04],
+          "material_color": "0.2 0.2 0.2 1.0"
+        },
+        "collision": {
+          "geometry": "cylinder",
+          "dimensions": [0.08, 0.04]
+        },
+        "inertial": {
+          "mass": 0.5
+        }
+      },
+      {
+        "name": "right_wheel",
+        "visual": {
+          "geometry": "cylinder",
+          "dimensions": [0.08, 0.04],
+          "material_color": "0.2 0.2 0.2 1.0"
+        },
+        "collision": {
+          "geometry": "cylinder",
+          "dimensions": [0.08, 0.04]
+        },
+        "inertial": {
+          "mass": 0.5
+        }
+      },
+      {
+        "name": "caster_wheel",
+        "visual": {
+          "geometry": "sphere",
+          "dimensions": [0.04],
+          "material_color": "0.4 0.4 0.4 1.0"
+        },
+        "collision": {
+          "geometry": "sphere",
+          "dimensions": [0.04]
+        },
+        "inertial": {
+          "mass": 0.2
+        }
+      },
+      {
+        "name": "laser_frame",
+        "visual": {
+          "geometry": "cylinder",
+          "dimensions": [0.03, 0.04],
+          "material_color": "0.9 0.1 0.1 1.0"
+        },
+        "collision": {
+          "geometry": "cylinder",
+          "dimensions": [0.03, 0.04]
+        },
+        "inertial": {
+          "mass": 0.1
+        }
+      },
+      {
+        "name": "imu_link",
+        "visual": {
+          "geometry": "box",
+          "dimensions": [0.02, 0.02, 0.01],
+          "material_color": "0.1 0.8 0.1 1.0"
+        },
+        "collision": {
+          "geometry": "box",
+          "dimensions": [0.02, 0.02, 0.01]
+        },
+        "inertial": {
+          "mass": 0.05
+        }
+      }
+    ],
+    "joints": [
+      {
+        "name": "left_wheel_joint",
+        "type": "continuous",
+        "parent": "base_link",
+        "child": "left_wheel",
+        "origin": { "xyz": [0.1, 0.18, 0.0], "rpy": [-1.5708, 0.0, 0.0] },
+        "axis": [0, 0, 1]
+      },
+      {
+        "name": "right_wheel_joint",
+        "type": "continuous",
+        "parent": "base_link",
+        "child": "right_wheel",
+        "origin": { "xyz": [0.1, -0.18, 0.0], "rpy": [-1.5708, 0.0, 0.0] },
+        "axis": [0, 0, 1]
+      },
+      {
+        "name": "caster_wheel_joint",
+        "type": "fixed",
+        "parent": "base_link",
+        "child": "caster_wheel",
+        "origin": { "xyz": [-0.2, 0.0, -0.04], "rpy": [0.0, 0.0, 0.0] },
+        "axis": [0, 0, 1]
+      },
+      {
+        "name": "laser_joint",
+        "type": "fixed",
+        "parent": "base_link",
+        "child": "laser_frame",
+        "origin": { "xyz": [0.15, 0.0, 0.12], "rpy": [0.0, 0.0, 0.0] },
+        "axis": [0, 0, 1]
+      },
+      {
+        "name": "imu_joint",
+        "type": "fixed",
+        "parent": "base_link",
+        "child": "imu_link",
+        "origin": { "xyz": [0.0, 0.0, 0.05], "rpy": [0.0, 0.0, 0.0] },
+        "axis": [0, 0, 1]
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_lidar",
+      "block_type": "LidarSensorBlock",
+      "name": "sim_lidar",
+      "package": "sensor_drivers",
+      "executable": "lidar_driver",
+      "parameters": {
+        "scan_rate": 10.0,
+        "range_max": 12.0
+      },
+      "ports": [
+        {
+          "id": "p_lidar_out",
+          "name": "scan",
+          "direction": "output",
+          "topic": "/scan",
+          "msg_type": "sensor_msgs/msg/LaserScan",
+          "qos": {
+            "reliability": "best_effort",
+            "durability": "volatile",
+            "depth": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "node_imu",
+      "block_type": "ImuSensorBlock",
+      "name": "sim_imu",
+      "package": "sensor_drivers",
+      "executable": "imu_driver",
+      "parameters": {
+        "update_rate": 50.0
+      },
+      "ports": [
+        {
+          "id": "p_imu_out",
+          "name": "imu",
+          "direction": "output",
+          "topic": "/imu",
+          "msg_type": "sensor_msgs/msg/Imu",
+          "qos": {
+            "reliability": "best_effort",
+            "durability": "volatile",
+            "depth": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "node_slam",
+      "block_type": "SlamToolboxBlock",
+      "name": "slam_toolbox",
+      "package": "slam_toolbox",
+      "executable": "async_slam_toolbox_node",
+      "parameters": {
+        "odom_frame": "odom",
+        "map_frame": "map",
+        "base_frame": "base_footprint"
+      },
+      "ports": [
+        {
+          "id": "p_slam_in_scan",
+          "name": "scan",
+          "direction": "input",
+          "topic": "/scan",
+          "msg_type": "sensor_msgs/msg/LaserScan",
+          "qos": {
+            "reliability": "best_effort",
+            "durability": "volatile",
+            "depth": 5
+          }
+        },
+        {
+          "id": "p_slam_out_map",
+          "name": "map",
+          "direction": "output",
+          "topic": "/map",
+          "msg_type": "nav_msgs/msg/OccupancyGrid",
+          "qos": {
+            "reliability": "reliable",
+            "durability": "transient_local",
+            "depth": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "node_costmap",
+      "block_type": "Nav2CostmapBlock",
+      "name": "global_costmap",
+      "package": "nav2_costmap_2d",
+      "executable": "nav2_costmap_2d",
+      "parameters": {
+        "inflation_radius": 0.55,
+        "robot_radius": 0.25
+      },
+      "ports": [
+        {
+          "id": "p_costmap_in_scan",
+          "name": "scan",
+          "direction": "input",
+          "topic": "/scan",
+          "msg_type": "sensor_msgs/msg/LaserScan",
+          "qos": {
+            "reliability": "best_effort",
+            "durability": "volatile",
+            "depth": 5
+          }
+        },
+        {
+          "id": "p_costmap_in_map",
+          "name": "map",
+          "direction": "input",
+          "topic": "/map",
+          "msg_type": "nav_msgs/msg/OccupancyGrid",
+          "qos": {
+            "reliability": "reliable",
+            "durability": "transient_local",
+            "depth": 1
+          }
+        },
+        {
+          "id": "p_costmap_out",
+          "name": "costmap",
+          "direction": "output",
+          "topic": "/global_costmap/costmap",
+          "msg_type": "nav_msgs/msg/OccupancyGrid",
+          "qos": {
+            "reliability": "reliable",
+            "durability": "transient_local",
+            "depth": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "node_planner",
+      "block_type": "Nav2PathPlannerBlock",
+      "name": "nav2_planner",
+      "package": "nav2_navfn_planner",
+      "executable": "navfn_planner",
+      "parameters": {
+        "tolerance": 0.2
+      },
+      "ports": [
+        {
+          "id": "p_planner_in_costmap",
+          "name": "costmap",
+          "direction": "input",
+          "topic": "/global_costmap/costmap",
+          "msg_type": "nav_msgs/msg/OccupancyGrid",
+          "qos": {
+            "reliability": "reliable",
+            "durability": "transient_local",
+            "depth": 1
+          }
+        },
+        {
+          "id": "p_planner_out_plan",
+          "name": "plan",
+          "direction": "output",
+          "topic": "/plan",
+          "msg_type": "nav_msgs/msg/Path",
+          "qos": {
+            "reliability": "reliable",
+            "durability": "volatile",
+            "depth": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "node_controller",
+      "block_type": "Nav2ControllerBlock",
+      "name": "nav2_controller",
+      "package": "nav2_dwb_controller",
+      "executable": "dwb_controller",
+      "parameters": {
+        "max_vel_x": 0.5,
+        "max_vel_theta": 1.0
+      },
+      "ports": [
+        {
+          "id": "p_ctrl_in_plan",
+          "name": "plan",
+          "direction": "input",
+          "topic": "/plan",
+          "msg_type": "nav_msgs/msg/Path",
+          "qos": {
+            "reliability": "reliable",
+            "durability": "volatile",
+            "depth": 1
+          }
+        },
+        {
+          "id": "p_ctrl_out_cmd",
+          "name": "cmd_vel_raw",
+          "direction": "output",
+          "topic": "/cmd_vel_raw",
+          "msg_type": "geometry_msgs/msg/Twist",
+          "qos": {
+            "reliability": "reliable",
+            "durability": "volatile",
+            "depth": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "node_custom_safety",
+      "block_type": "CustomPythonNodeBlock",
+      "name": "safety_filter",
+      "package": "agy_rover_bringup",
+      "executable": "safety_filter",
+      "parameters": {
+        "emergency_stop_dist": 0.3
+      },
+      "ports": [
+        {
+          "id": "p_cust_in_cmd",
+          "name": "cmd_vel_raw",
+          "direction": "input",
+          "topic": "/cmd_vel_raw",
+          "msg_type": "geometry_msgs/msg/Twist",
+          "qos": {
+            "reliability": "reliable",
+            "durability": "volatile",
+            "depth": 10
+          }
+        },
+        {
+          "id": "p_cust_out_cmd",
+          "name": "cmd_vel",
+          "direction": "output",
+          "topic": "/cmd_vel",
+          "msg_type": "geometry_msgs/msg/Twist",
+          "qos": {
+            "reliability": "reliable",
+            "durability": "volatile",
+            "depth": 10
+          }
+        }
+      ],
+      "custom_code": "    def on_cmd_vel_raw(self, msg: Twist):\n        # Scaffolded student code for velocity safety limiter\n        safe_twist = Twist()\n        safe_twist.linear.x = min(msg.linear.x, 0.4)\n        safe_twist.angular.z = msg.angular.z\n        self.pub_cmd_vel.publish(safe_twist)\n"
+    }
+  ],
+  "wires": [
+    {
+      "id": "w_lidar_to_slam",
+      "from_node": "node_lidar",
+      "from_port": "p_lidar_out",
+      "to_node": "node_slam",
+      "to_port": "p_slam_in_scan"
+    },
+    {
+      "id": "w_lidar_to_costmap",
+      "from_node": "node_lidar",
+      "from_port": "p_lidar_out",
+      "to_node": "node_costmap",
+      "to_port": "p_costmap_in_scan"
+    },
+    {
+      "id": "w_slam_to_costmap",
+      "from_node": "node_slam",
+      "from_port": "p_slam_out_map",
+      "to_node": "node_costmap",
+      "to_port": "p_costmap_in_map"
+    },
+    {
+      "id": "w_costmap_to_planner",
+      "from_node": "node_costmap",
+      "from_port": "p_costmap_out",
+      "to_node": "node_planner",
+      "to_port": "p_planner_in_costmap"
+    },
+    {
+      "id": "w_planner_to_ctrl",
+      "from_node": "node_planner",
+      "from_port": "p_planner_out_plan",
+      "to_node": "node_controller",
+      "to_port": "p_ctrl_in_plan"
+    },
+    {
+      "id": "w_ctrl_to_safety",
+      "from_node": "node_controller",
+      "from_port": "p_ctrl_out_cmd",
+      "to_node": "node_custom_safety",
+      "to_port": "p_cust_in_cmd"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AGY-ROS Workspace Abstract Syntax Tree",
+  "type": "object",
+  "required": ["workspace_meta", "robot_model", "nodes", "wires"],
+  "properties": {
+    "workspace_meta": {
+      "type": "object",
+      "required": ["project_name", "package_name", "ros_distro", "domain_id"],
+      "properties": {
+        "project_name": { "type": "string" },
+        "package_name": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "ros_distro": { "type": "string", "enum": ["humble", "iron", "jazzy"] },
+        "domain_id": { "type": "integer", "minimum": 0, "maximum": 101 },
+        "use_sim_time": { "type": "boolean", "default": true },
+        "hardware_target": { "type": "string", "enum": ["gazebo_sim", "microros", "serial_hal", "ros2_control"] }
+      }
+    },
+    "robot_model": {
+      "type": "object",
+      "required": ["name", "base_link", "links", "joints"],
+      "properties": {
+        "name": { "type": "string" },
+        "base_link": { "type": "string" },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "visual": {
+                "type": "object",
+                "properties": {
+                  "geometry": { "type": "string", "enum": ["box", "cylinder", "sphere", "mesh"] },
+                  "dimensions": { "type": "array", "items": { "type": "number" } },
+                  "material_color": { "type": "string" }
+                }
+              },
+              "collision": {
+                "type": "object",
+                "properties": {
+                  "geometry": { "type": "string", "enum": ["box", "cylinder", "sphere", "mesh"] },
+                  "dimensions": { "type": "array", "items": { "type": "number" } }
+                }
+              },
+              "inertial": {
+                "type": "object",
+                "properties": {
+                  "mass": { "type": "number", "minimum": 0.0001 },
+                  "ixx": { "type": "number" },
+                  "iyy": { "type": "number" },
+                  "izz": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "joints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "parent", "child", "origin", "axis"],
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string", "enum": ["fixed", "continuous", "revolute", "prismatic"] },
+              "parent": { "type": "string" },
+              "child": { "type": "string" },
+              "origin": {
+                "type": "object",
+                "properties": {
+                  "xyz": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 },
+                  "rpy": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 }
+                }
+              },
+              "axis": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 }
+            }
+          }
+        }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "block_type", "name", "package", "executable", "ports", "parameters"],
+        "properties": {
+          "id": { "type": "string" },
+          "block_type": { "type": "string" },
+          "name": { "type": "string" },
+          "package": { "type": "string" },
+          "executable": { "type": "string" },
+          "ports": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "name", "direction", "topic", "msg_type", "qos"],
+              "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "direction": { "type": "string", "enum": ["input", "output"] },
+                "topic": { "type": "string" },
+                "msg_type": { "type": "string" },
+                "qos": {
+                  "type": "object",
+                  "properties": {
+                    "reliability": { "type": "string", "enum": ["reliable", "best_effort"] },
+                    "durability": { "type": "string", "enum": ["volatile", "transient_local"] },
+                    "depth": { "type": "integer", "default": 10 }
+                  }
+                }
+              }
+            }
+          },
+          "parameters": { "type": "object" },
+          "custom_code": { "type": "string" }
+        }
+      }
+    },
+    "wires": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "from_node", "from_port", "to_node", "to_port"],
+        "properties": {
+          "id": { "type": "string" },
+          "from_node": { "type": "string" },
+          "from_port": { "type": "string" },
+          "to_node": { "type": "string" },
+          "to_port": { "type": "string" }
+        }
+      }
+    }
+  }
+}

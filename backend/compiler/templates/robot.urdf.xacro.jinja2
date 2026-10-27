@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="{{ robot_model.name }}">
+
+  <!-- Kinematic Base Footprint -->
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="{{ robot_model.base_link }}"/>
+    <origin xyz="0 0 0.05" rpy="0 0 0"/>
+  </joint>
+
+{% for link in robot_model.links %}
+  <!-- Link: {{ link.name }} -->
+  <link name="{{ link.name }}">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+{% if link.visual.geometry == 'box' %}
+        <box size="{{ link.visual.dimensions[0] }} {{ link.visual.dimensions[1] }} {{ link.visual.dimensions[2] }}"/>
+{% elif link.visual.geometry == 'cylinder' %}
+        <cylinder radius="{{ link.visual.dimensions[0] }}" length="{{ link.visual.dimensions[1] }}"/>
+{% elif link.visual.geometry == 'sphere' %}
+        <sphere radius="{{ link.visual.dimensions[0] }}"/>
+{% endif %}
+      </geometry>
+      <material name="mat_{{ link.name }}">
+        <color rgba="{{ link.visual.material_color | default('0.7 0.7 0.7 1.0') }}"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+{% if link.collision.geometry == 'box' %}
+        <box size="{{ link.collision.dimensions[0] }} {{ link.collision.dimensions[1] }} {{ link.collision.dimensions[2] }}"/>
+{% elif link.collision.geometry == 'cylinder' %}
+        <cylinder radius="{{ link.collision.dimensions[0] }}" length="{{ link.collision.dimensions[1] }}"/>
+{% elif link.collision.geometry == 'sphere' %}
+        <sphere radius="{{ link.collision.dimensions[0] }}"/>
+{% endif %}
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="{{ link.inertial.mass | default(1.0) }}"/>
+      <inertia ixx="{{ link.inertial.ixx | default(0.01) }}" ixy="0.0" ixz="0.0"
+               iyy="{{ link.inertial.iyy | default(0.01) }}" iyz="0.0"
+               izz="{{ link.inertial.izz | default(0.01) }}"/>
+    </inertial>
+  </link>
+{% endfor %}
+
+{% for joint in robot_model.joints %}
+  <!-- Joint: {{ joint.name }} ({{ joint.type }}) -->
+  <joint name="{{ joint.name }}" type="{{ joint.type }}">
+    <parent link="{{ joint.parent }}"/>
+    <child link="{{ joint.child }}"/>
+    <origin xyz="{{ joint.origin.xyz[0] }} {{ joint.origin.xyz[1] }} {{ joint.origin.xyz[2] }}"
+            rpy="{{ joint.origin.rpy[0] }} {{ joint.origin.rpy[1] }} {{ joint.origin.rpy[2] }}"/>
+{% if joint.type != 'fixed' %}
+    <axis xyz="{{ joint.axis[0] }} {{ joint.axis[1] }} {{ joint.axis[2] }}"/>
+{% endif %}
+  </joint>
+{% endfor %}
+
+{% if workspace_meta.hardware_target == 'gazebo_sim' %}
+  <!-- Gazebo Sim Differential Drive Plugin -->
+  <gazebo>
+    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>0.30</wheel_separation>
+      <wheel_radius>0.05</wheel_radius>
+      <topic>/cmd_vel</topic>
+      <odom_topic>/odom</odom_topic>
+      <frame_id>odom</frame_id>
+      <child_frame_id>base_footprint</child_frame_id>
+    </plugin>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+  </gazebo>
+{% endif %}
+
+</robot>

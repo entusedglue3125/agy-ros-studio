@@ -1,0 +1,213 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="agy_rover">
+
+  <!-- Kinematic Base Footprint -->
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0.05" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Link: base_link -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.5 0.3 0.15"/>
+      </geometry>
+      <material name="mat_base_link">
+        <color rgba="0.1 0.5 0.8 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.5 0.3 0.15"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="5.0"/>
+      <inertia ixx="0.046875" ixy="0.0" ixz="0.0"
+               iyy="0.113542" iyz="0.0"
+               izz="0.141667"/>
+    </inertial>
+  </link>
+  <!-- Link: left_wheel -->
+  <link name="left_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.08" length="0.04"/>
+      </geometry>
+      <material name="mat_left_wheel">
+        <color rgba="0.2 0.2 0.2 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.08" length="0.04"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.000867" ixy="0.0" ixz="0.0"
+               iyy="0.000867" iyz="0.0"
+               izz="0.0016"/>
+    </inertial>
+  </link>
+  <!-- Link: right_wheel -->
+  <link name="right_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.08" length="0.04"/>
+      </geometry>
+      <material name="mat_right_wheel">
+        <color rgba="0.2 0.2 0.2 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.08" length="0.04"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.000867" ixy="0.0" ixz="0.0"
+               iyy="0.000867" iyz="0.0"
+               izz="0.0016"/>
+    </inertial>
+  </link>
+  <!-- Link: caster_wheel -->
+  <link name="caster_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+      <material name="mat_caster_wheel">
+        <color rgba="0.4 0.4 0.4 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.2"/>
+      <inertia ixx="0.000128" ixy="0.0" ixz="0.0"
+               iyy="0.000128" iyz="0.0"
+               izz="0.000128"/>
+    </inertial>
+  </link>
+  <!-- Link: laser_frame -->
+  <link name="laser_frame">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.04"/>
+      </geometry>
+      <material name="mat_laser_frame">
+        <color rgba="0.9 0.1 0.1 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.04"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="3.6e-05" ixy="0.0" ixz="0.0"
+               iyy="3.6e-05" iyz="0.0"
+               izz="4.5e-05"/>
+    </inertial>
+  </link>
+  <!-- Link: imu_link -->
+  <link name="imu_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.02 0.02 0.01"/>
+      </geometry>
+      <material name="mat_imu_link">
+        <color rgba="0.1 0.8 0.1 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.02 0.02 0.01"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.05"/>
+      <inertia ixx="1e-05" ixy="0.0" ixz="0.0"
+               iyy="1e-05" iyz="0.0"
+               izz="1e-05"/>
+    </inertial>
+  </link>
+
+  <!-- Joint: left_wheel_joint (continuous) -->
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <origin xyz="0.1 0.18 0.0"
+            rpy="-1.5708 0.0 0.0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <!-- Joint: right_wheel_joint (continuous) -->
+  <joint name="right_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <origin xyz="0.1 -0.18 0.0"
+            rpy="-1.5708 0.0 0.0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <!-- Joint: caster_wheel_joint (fixed) -->
+  <joint name="caster_wheel_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_wheel"/>
+    <origin xyz="-0.2 0.0 -0.04"
+            rpy="0.0 0.0 0.0"/>
+  </joint>
+  <!-- Joint: laser_joint (fixed) -->
+  <joint name="laser_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="laser_frame"/>
+    <origin xyz="0.15 0.0 0.12"
+            rpy="0.0 0.0 0.0"/>
+  </joint>
+  <!-- Joint: imu_joint (fixed) -->
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <origin xyz="0.0 0.0 0.05"
+            rpy="0.0 0.0 0.0"/>
+  </joint>
+
+  <!-- Gazebo Sim Differential Drive Plugin -->
+  <gazebo>
+    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>0.30</wheel_separation>
+      <wheel_radius>0.05</wheel_radius>
+      <topic>/cmd_vel</topic>
+      <odom_topic>/odom</odom_topic>
+      <frame_id>odom</frame_id>
+      <child_frame_id>base_footprint</child_frame_id>
+    </plugin>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+  </gazebo>
+
+</robot>

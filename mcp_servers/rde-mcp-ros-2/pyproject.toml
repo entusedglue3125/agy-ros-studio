@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rde-mcp-ros-2"
+version = "1.0.1"
+description = "Model Context Protocol server for ROS 2 introspection and control"
+authors = [
+    {name = "Ranch Hand Robotics", email = "info@ranchhandrobotics.com"}
+]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+keywords = ["ros2", "mcp", "model-context-protocol", "ai", "llm", "robotics"]
+
+dependencies = [
+    "mcp[cli]>=1.12.3",
+    "pyyaml>=6.0",
+    "pydantic>=2.0",
+    "requests>=2.31.0",
+    "numpy>=1.20.0",
+    "jinja2>=3.0.0",
+    "setuptools>=61.0",
+    "typeguard>=4.0.0",
+    "lark-parser>=0.12.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/ranch-hand-robotics/rde-mcp-ros-2"
+Repository = "https://github.com/ranch-hand-robotics/rde-mcp-ros-2"
+"Bug Tracker" = "https://github.com/ranch-hand-robotics/rde-mcp-ros-2/issues"
+
+[project.scripts]
+rde-mcp-ros2 = "rde_mcp_ros2:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311']
+
+[tool.ruff]
+line-length = 100
+target-version = "py38"
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false

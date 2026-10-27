@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "antigravity-sub-agent": {
+      "command": "node",
+      "args": ["/home/chakradhar/Downloads/PICK_AND_DROP/mcp_servers/antigravity-sub-agent-mcp/index.js"]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    }
+  }
+}
